@@ -1,5 +1,6 @@
 import {db} from '../models/db.js'
 import bcrypt from 'bcrypt'
+import { createToken } from '../utils/token.js'
 
 export const singup = async (req, res) => {
     const {nombre, contraseña, rol} = req.body
@@ -27,4 +28,27 @@ export const singup = async (req, res) => {
         console.log(error)
     }
 
+}
+
+export const singin =  async (req, res) => {
+    const {nombre, contraseña} = req.body
+    try{
+        if(!nombre, !contraseña) return res.status(400).json({message: "Uno o más campos vacios"})
+        const userExists = await db.select('*').where('nombre', nombre).from('users').first()
+        if(!userExists) return res.status(404).json({message: "Usuario no encontrado"})
+        const passWordMatch = await bcrypt.compare(contraseña, userExists.contraseña)
+        if(!passWordMatch) return res.status(404).json({message: "Contraseña incorrecta"})
+        const {contraseña: password, ...userData} = userExists
+        const token = createToken(userData)
+        return res.status(200).cookie('token', token, {
+                                                        httpOnly: true, 
+                                                        secure: true, 
+                                                        priority: 'high', 
+                                                        expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+                                                    }).json({message: 'Usuario logueado correctamente'});
+
+    }
+    catch(error){
+        console.log(error)
+    }
 }
