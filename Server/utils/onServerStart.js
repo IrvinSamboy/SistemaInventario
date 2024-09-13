@@ -7,6 +7,7 @@ export const createRoles = async () => {
 
         const newRoles = await Promise.all([
             db('roles').insert({nombre: "admin"}),
+            db('roles').insert({nombre: "gerente"}),
             db('roles').insert({nombre: "usuario"})
         ])
         console.log(newRoles)
