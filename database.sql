@@ -7,8 +7,8 @@ create table users(
 	idUser int PRIMARY KEY AUTO_INCREMENT,
     nombre varchar(150) NOT NULL,
     contraseña varchar(150) NOT NULL,
-    rol int NOT NULL,
-    FOREIGN KEY (rol) REFERENCES roles(idRol)
+    idRol int NOT NULL,
+    FOREIGN KEY (idRol) REFERENCES roles(idRol)
 );
 
 create table empleados (
