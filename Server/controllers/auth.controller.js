@@ -24,7 +24,7 @@ export const singup = async (req, res) => {
         return res.status(200).json({message: "Usuario creado correctamente"})
     }
     catch(error){
-        res.status(500).json({message: error})
+        res.status(500).json({message: error.message})
         console.log(error)
     }
 
@@ -39,7 +39,7 @@ export const singin =  async (req, res) => {
         const passWordMatch = await bcrypt.compare(contraseña, userExists.contraseña)
         if(!passWordMatch) return res.status(404).json({message: "Contraseña incorrecta"})
         const {contraseña: password, ...userData} = userExists
-        const token = createToken(userData)
+        const token = await createToken(userData)
         return res.status(200).cookie('token', token, {
                                                         httpOnly: true, 
                                                         secure: true, 
@@ -49,6 +49,20 @@ export const singin =  async (req, res) => {
 
     }
     catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+}
+
+export const logOut = async (req, res) => {
+    try{
+        res.status(200).clearCookie('token', {
+            httpOnly: true,
+            secure: true,
+        }).json({message: 'Sesión cerrada'});
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
         console.log(error)
     }
 }
