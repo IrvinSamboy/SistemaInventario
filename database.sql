@@ -18,7 +18,7 @@ create table users(
     nombre varchar(150) NOT NULL UNIQUE,
     contraseña varchar(150) NOT NULL,
     idRol int NOT NULL,
-    idEmpleado int NOT Null,
+    idEmpleado int,
     FOREIGN KEY (idRol) REFERENCES roles(idRol),
     FOREIGN KEY (idEmpleado) REFERENCES empleados(idEmpleado)
 );
@@ -67,3 +67,4 @@ CREATE TABLE detallesCompra (
     FOREIGN KEY (idCompra) REFERENCES compras(idCompra),
     FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
 )
+
