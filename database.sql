@@ -3,23 +3,26 @@ create table roles (
    	nombre varchar(150) NOT NULL
 );
 
-create table users(
-	idUser int PRIMARY KEY AUTO_INCREMENT,
-    nombre varchar(150) NOT NULL,
-    contraseña varchar(150) NOT NULL,
-    idRol int NOT NULL,
-    FOREIGN KEY (idRol) REFERENCES roles(idRol)
-);
-
 create table empleados (
     idEmpleado INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     apellido VARCHAR(255) NOT NULL,
     direccion VARCHAR(255),
-    telefono VARCHAR(15), 
-    email VARCHAR(255),
+    telefono VARCHAR(15) UNIQUE, 
+    email VARCHAR(255) UNIQUE,
     fecha_contratacion DATE
 );
+
+create table users(
+	idUser int PRIMARY KEY AUTO_INCREMENT,
+    nombre varchar(150) NOT NULL UNIQUE,
+    contraseña varchar(150) NOT NULL,
+    idRol int NOT NULL,
+    idEmpleado int NOT Null,
+    FOREIGN KEY (idRol) REFERENCES roles(idRol),
+    FOREIGN KEY (idEmpleado) REFERENCES empleados(idEmpleado)
+);
+
 
 create table categorias (
     idCategoria INT AUTO_INCREMENT PRIMARY KEY,
@@ -30,19 +33,19 @@ CREATE TABLE productos (
 	idProducto INT AUTO_INCREMENT PRIMARY KEY,
     nombre varchar(255) NOT NULL,
     descripcion varchar(255) NOT NULL,
-    stock int,
-    precioCompra decimal(10,2),
-    precioVenta decimal(10,2),
-    idCategoria int,
+    stock int NOT NULL,
+    precioCompra decimal(10,2) NOT NULL,
+    precioVenta decimal(10,2) NOT NULL,
+    idCategoria int NOT NULL,
     FOREIGN KEY (idCategoria) REFERENCES categorias(idCategoria)
 );
 
 CREATE TABLE proveedores (
 	idProveedor int AUTO_INCREMENT PRIMARY KEY,
-  	nombre varchar(255),
-    direccion varchar(255),
-    telefono varchar(13),
-    email varchar(150)
+  	nombre varchar(255) NOT NULL UNIQUE,
+    direccion varchar(255) NOT NULL,
+    telefono varchar(13) NOT NULL UNIQUE,
+    email varchar(150) NOT NULL UNIQUE
 );
 
 CREATE TABLE compras (
@@ -50,7 +53,9 @@ CREATE TABLE compras (
   	fecha DATE,
     total decimal(10,2),
    	idProveedor int,
-    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor)
+    idUser INT,
+    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor),
+    FOREIGN KEY (idUser) REFERENCES users(idUser)
 );
 
 CREATE TABLE detallesCompra (
