@@ -5,9 +5,9 @@ export const checkAuth = (roles) => async (req, res, next) => {
 
     try {
         const token = req.cookies.token
-        if(!token) res.status(403).json({message: "Sin autorización, no ha iniciado sesión"})
+        if(!token) return res.status(403).json({message: "Sin autorización, no ha iniciado sesión"})
         const tokenVerifyed = await verifyToken(token)
-        if(!tokenVerifyed) res.status(403).json({message: "Sin autorización, token de sesión incorrecto"})
+        if(!tokenVerifyed) return res.status(403).json({message: "Sin autorización, token de sesión incorrecto"})
         
         if(roles.length === 0) return next()
         
