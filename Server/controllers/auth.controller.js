@@ -34,7 +34,7 @@ export const singup = async (req, res) => {
 
 }
 
-export const singin =  async (req, res) => {
+export const signin =  async (req, res) => {
     const {nombre, contraseña} = req.body
     try{
         if(!nombre, !contraseña) return res.status(400).json({message: "Uno o más campos vacios"})
