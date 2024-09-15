@@ -3,6 +3,14 @@ create table roles (
    	nombre varchar(150) NOT NULL
 );
 
+create table users(
+	idUser int PRIMARY KEY AUTO_INCREMENT,
+    nombre varchar(150) NOT NULL UNIQUE,
+    contraseña varchar(150) NOT NULL,
+    idRol int NOT NULL,
+    FOREIGN KEY (idRol) REFERENCES roles(idRol)
+);
+
 create table empleados (
     idEmpleado INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
@@ -10,19 +18,10 @@ create table empleados (
     direccion VARCHAR(255),
     telefono VARCHAR(15) UNIQUE, 
     email VARCHAR(255) UNIQUE,
-    fecha_contratacion DATE
+    fecha_contratacion DATE,
+    idUser int NOT NULL,
+    FOREIGN KEY (idUser) REFERENCES users(idUser)
 );
-
-create table users(
-	idUser int PRIMARY KEY AUTO_INCREMENT,
-    nombre varchar(150) NOT NULL UNIQUE,
-    contraseña varchar(150) NOT NULL,
-    idRol int NOT NULL,
-    idEmpleado int,
-    FOREIGN KEY (idRol) REFERENCES roles(idRol),
-    FOREIGN KEY (idEmpleado) REFERENCES empleados(idEmpleado)
-);
-
 
 create table categorias (
     idCategoria INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,4 +66,3 @@ CREATE TABLE detallesCompra (
     FOREIGN KEY (idCompra) REFERENCES compras(idCompra),
     FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
 )
-
