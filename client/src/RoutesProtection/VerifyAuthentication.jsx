@@ -27,13 +27,13 @@ export default function VerifyAuthentication() {
   
   useEffect(()=> {
     verifyLogin()
-  }, [])
+  }, [location])
 
   if(loading) return <h1>Cargando</h1>
 
   
   if(authenticated) return location.pathname !== '/'? <Navigate to='/' /> : <Outlet />
 
-  return location.pathname !== '/singin'? <Navigate to='/singin' /> : <Outlet />
+  return location.pathname !== '/signin'? <Navigate to='/signin' /> : <Outlet />
 
 }
