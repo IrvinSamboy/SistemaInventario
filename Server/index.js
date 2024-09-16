@@ -4,6 +4,7 @@ import morgan from "morgan"
 import {verifyConnection} from "./models/db.js"
 import {createRoles} from './utils/onServerStart.js'
 import authRoutes from './routes/auth.routes.js'
+import empleadosRoutes from './routes/empleados.routes.js';
 import cookieParser from 'cookie-parser'
 dotenv.config()
 
@@ -16,7 +17,8 @@ app.use(express.json())
 app.use(cookieParser())
 
 
-app.use('/api/auth', authRoutes)
+app.use('/api/auth', authRoutes);
+app.use('/api', empleadosRoutes);
 
 const setUpServer = async () => {
     try{
