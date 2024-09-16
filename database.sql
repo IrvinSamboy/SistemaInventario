@@ -19,6 +19,7 @@ create table empleados (
     telefono VARCHAR(15) UNIQUE, 
     email VARCHAR(255) UNIQUE,
     fecha_contratacion DATE,
+    foto varchar(255),
     idUser int NOT NULL,
     FOREIGN KEY (idUser) REFERENCES users(idUser)
 );
@@ -33,6 +34,7 @@ CREATE TABLE productos (
     nombre varchar(255) NOT NULL,
     descripcion varchar(255) NOT NULL,
     stock int NOT NULL,
+    foto varchar(255),
     precioCompra decimal(10,2) NOT NULL,
     precioVenta decimal(10,2) NOT NULL,
     idCategoria int NOT NULL,
