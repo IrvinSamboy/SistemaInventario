@@ -16,8 +16,8 @@ export const getProveedorById = async (req, res) => {
     try{
         const {id} = req.params
         const proveedor = await db.select('*').where('idProveedor', id).from('proveedores').first()
-        if(proveedor) return res.status(404).json({message: "Proveedor no encontrado"})
-        return res.status(200).json({message: proveedores})
+        if(!proveedor) return res.status(404).json({message: "Proveedor no encontrado"})
+        return res.status(200).json({message: proveedor})
     }
     catch(error){
         res.status(500).json({message: error.message})
@@ -42,7 +42,7 @@ export const createProveedor = async (req, res) => {
 export const updateProveedor = async (req, res) => {
     try{
         const {id} = req.params
-        const proveedorExists = await db.select('*').where('idProveedor', id).from('proveedores')
+        const proveedorExists = await db.select('*').where('idProveedor', id).from('proveedores').first()
         if(!proveedorExists) return res.status(404).json({message: "Proveedor no encontrado"})
         
         const {
@@ -52,12 +52,12 @@ export const updateProveedor = async (req, res) => {
             email = proveedorExists.email
         } = req.body
 
-        const proveedorEdited = await db.update({
+        const proveedorEdited = await db('proveedores').update({
             nombre,
             direccion,
             telefono,
             email
-        }).where('id', id)
+        }).where('idProveedor', id)
 
         if(!proveedorEdited) return res.status(500).json({message: "Error al editar el proveedor"})
         return res.status(200).json({message: "Proveedor editado correctamente"})
@@ -74,7 +74,7 @@ export const deleteProveedor = async (req, res) => {
         const {id} = req.params
         const proveedorExists = await db.select('*').where('idProveedor', id).from('proveedores')
         if(!proveedorExists) return res.status(404).json({message: "Proveedor no encontrado"})
-        db('proveedores').where('idProveedor', id).del()
+        await db('proveedores').where('idProveedor', id).del()
         return res.status(200).json({message: "Proveedor eliminado correctamente"})
     }
     catch(error){
