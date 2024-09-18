@@ -5,6 +5,7 @@ import {verifyConnection} from "./models/db.js"
 import {createRoles} from './utils/onServerStart.js'
 import authRoutes from './routes/auth.routes.js'
 import empleadosRoutes from './routes/empleados.routes.js';
+import proveedoresRoutes from './routes/proveedores.routes.js'
 import cookieParser from 'cookie-parser'
 dotenv.config()
 
@@ -19,6 +20,7 @@ app.use(cookieParser())
 
 app.use('/api/auth', authRoutes);
 app.use('/api', empleadosRoutes);
+app.use('/api/proveedores', proveedoresRoutes)
 
 const setUpServer = async () => {
     try{

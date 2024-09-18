@@ -24,3 +24,61 @@ export const getProveedorById = async (req, res) => {
         console.log(error)
     }
 }
+
+export const createProveedor = async (req, res) => {
+    try{
+        const {nombre, direccion, telefono, email} = req.body
+        if(!nombre, !direccion, !telefono, !email) return res.status(400).json({message: "Uno o más campos vacios"})
+        const newProveedor = await db('proveedores').insert({nombre, direccion, telefono, email})
+        if(!newProveedor) return res.status(500).json({message: "Error al crear el proveedor"})
+        return res.status(200).json({message: "Proveedor creado correctamente"})
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+}
+
+export const updateProveedor = async (req, res) => {
+    try{
+        const {id} = req.params
+        const proveedorExists = await db.select('*').where('idProveedor', id).from('proveedores')
+        if(!proveedorExists) return res.status(404).json({message: "Proveedor no encontrado"})
+        
+        const {
+            nombre = proveedorExists.nombre,
+            direccion = proveedorExists.direccion,
+            telefono = proveedorExists.telefono,
+            email = proveedorExists.email
+        } = req.body
+
+        const proveedorEdited = await db.update({
+            nombre,
+            direccion,
+            telefono,
+            email
+        }).where('id', id)
+
+        if(!proveedorEdited) return res.status(500).json({message: "Error al editar el proveedor"})
+        return res.status(200).json({message: "Proveedor editado correctamente"})
+
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+}
+
+export const deleteProveedor = async (req, res) => {
+    try{
+        const {id} = req.params
+        const proveedorExists = await db.select('*').where('idProveedor', id).from('proveedores')
+        if(!proveedorExists) return res.status(404).json({message: "Proveedor no encontrado"})
+        db('proveedores').where('idProveedor', id).del()
+        return res.status(200).json({message: "Proveedor eliminado correctamente"})
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+} 

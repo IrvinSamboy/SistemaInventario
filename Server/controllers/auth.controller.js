@@ -3,11 +3,11 @@ import bcrypt from 'bcrypt'
 import { createToken } from '../utils/token.js'
 
 export const singup = async (req, res) => {
-    const {nombre, contraseña, rol, idEmpleado} = req.body
+    const {nombre, contraseña, rol} = req.body
     const salt = await bcrypt.genSalt(10)
     const hashedPassWord = await bcrypt.hash(contraseña, salt)
     try{
-        if(!nombre || !contraseña || !idEmpleado) return res.status(400).json({message: "Uno o más campos vacios"})
+        if(!nombre || !contraseña) return res.status(400).json({message: "Uno o más campos vacios"})
         let rolId;
         if(rol) {
             const {idRol} = await db.select('idRol').where('idRol', rol).from('roles').first()
@@ -20,10 +20,7 @@ export const singup = async (req, res) => {
             rolId = idRol;
         }
 
-        const verifyEmpleado = await db.select('idEmpleado').where('idEmpleado', idEmpleado).from('empleados').first()
-        if(!verifyEmpleado) return res.status(404).json({message: "Empleado no encontrado"})
-
-        const usuario = await db('users').insert({nombre, contraseña: hashedPassWord, idRol: rolId, idEmpleado: idEmpleado})
+        const usuario = await db('users').insert({nombre, contraseña: hashedPassWord, idRol: rolId})
         if(!usuario) return res.status(500).json({message: "Error al crear el usuario"})
         return res.status(200).json({message: "Usuario creado correctamente"})
     }
