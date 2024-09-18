@@ -38,7 +38,7 @@ CREATE TABLE productos (
     precioCompra decimal(10,2) NOT NULL,
     precioVenta decimal(10,2) NOT NULL,
     idCategoria int NOT NULL,
-    FOREIGN KEY (idCategoria) REFERENCES categorias(idCategoria)
+    FOREIGN KEY (idCategoria) REFERENCES categorias(idCategoria) ON DELETE CASCADE
 );
 
 CREATE TABLE proveedores (
