@@ -52,7 +52,7 @@ CREATE TABLE proveedores (
 CREATE TABLE compras (
     idCompra int AUTO_INCREMENT PRIMARY KEY,
     fecha DATE,
-    total decimal(10,2),
+    total decimal(10,2) DEFAULT 0, 
     idProveedor int,
     idUser INT,
     FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor) ON DELETE SET NULL,

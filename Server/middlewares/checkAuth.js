@@ -1,12 +1,10 @@
 import {db} from '../models/db.js'
 import {verifyToken} from '../utils/token.js'
-
+import getToken from '../utils/getToken.js'
 export const checkAuth = (roles) => async (req, res, next) => {
 
     try {
-        const token = req.cookies.token
-        if(!token) return res.status(403).json({message: "Sin autorización, no ha iniciado sesión"})
-        const tokenVerifyed = await verifyToken(token)
+        const tokenVerifyed = getToken(req.cookies.token)
         if(!tokenVerifyed) return res.status(403).json({message: "Sin autorización, token de sesión incorrecto"})
         
         if(roles.length === 0) return next()
