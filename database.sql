@@ -50,23 +50,23 @@ CREATE TABLE proveedores (
 );
 
 CREATE TABLE compras (
-	idCompra int AUTO_INCREMENT PRIMARY KEY,
-  	fecha DATE,
+    idCompra int AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE,
     total decimal(10,2),
-   	idProveedor int,
+    idProveedor int,
     idUser INT,
-    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor),
-    FOREIGN KEY (idUser) REFERENCES users(idUser)
+    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor) ON DELETE SET NULL,
+    FOREIGN KEY (idUser) REFERENCES users(idUser) ON DELETE SET NULL
 );
 
 CREATE TABLE detallesCompra (
-	idDetalle int AUTO_INCREMENT PRIMARY KEY,
+    idDetalle int AUTO_INCREMENT PRIMARY KEY,
     idCompra int,
     idProducto int,
     cantidad int,
     precioUnitario decimal(10,2),
-    FOREIGN KEY (idCompra) REFERENCES compras(idCompra),
-    FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
+    FOREIGN KEY (idCompra) REFERENCES compras(idCompra) ON DELETE SET NULL,
+    FOREIGN KEY (idProducto) REFERENCES productos(idProducto) ON DELETE SET NULL
 );
 
 CREATE TABLE reportes (
