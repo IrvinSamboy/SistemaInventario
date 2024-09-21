@@ -50,21 +50,45 @@ CREATE TABLE proveedores (
 );
 
 CREATE TABLE compras (
-	idCompra int AUTO_INCREMENT PRIMARY KEY,
-  	fecha DATE,
-    total decimal(10,2),
-   	idProveedor int,
+    idCompra int AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE,
+    total decimal(10,2) DEFAULT 0, 
+    idProveedor int,
     idUser INT,
-    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor),
-    FOREIGN KEY (idUser) REFERENCES users(idUser)
+    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor) ON DELETE SET NULL,
+    FOREIGN KEY (idUser) REFERENCES users(idUser) ON DELETE SET NULL
 );
 
 CREATE TABLE detallesCompra (
-	idDetalle int AUTO_INCREMENT PRIMARY KEY,
+    idDetalle int AUTO_INCREMENT PRIMARY KEY,
     idCompra int,
     idProducto int,
     cantidad int,
     precioUnitario decimal(10,2),
+    FOREIGN KEY (idCompra) REFERENCES compras(idCompra) ON DELETE SET NULL,
+    FOREIGN KEY (idProducto) REFERENCES productos(idProducto) ON DELETE SET NULL
+);
+
+CREATE TABLE reportes (
+    idReporte int AUTO_INCREMENT PRIMARY KEY,
+    idCompra int,
+    fecha DATE,
+    total decimal,
+    idProveedor INT,
+    nombreProveedor varchar(255),
+    idUser INT,
+    nombreUsuario varchar(150),
     FOREIGN KEY (idCompra) REFERENCES compras(idCompra),
+    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor),
+    FOREIGN KEY (idUser) REFERENCES users(idUser)
+);
+
+CREATE TABLE detalleReporte (
+    idReporte int AUTO_INCREMENT PRIMARY KEY,
+    idProducto INT,
+    nombreProducto varchar(255) NOT NULL,
+    cantidad INT,
+    precioUnitario decimal(10,2),
+    FOREIGN KEY (idReporte) REFERENCES reportes(idReporte),
     FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
-)
+);
