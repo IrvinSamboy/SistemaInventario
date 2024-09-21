@@ -67,4 +67,28 @@ CREATE TABLE detallesCompra (
     precioUnitario decimal(10,2),
     FOREIGN KEY (idCompra) REFERENCES compras(idCompra),
     FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
-)
+);
+
+CREATE TABLE reportes (
+    idReporte int AUTO_INCREMENT PRIMARY KEY,
+    idCompra int,
+    fecha DATE,
+    total decimal,
+    idProveedor INT,
+    nombreProveedor varchar(255),
+    idUser INT,
+    nombreUsuario varchar(150),
+    FOREIGN KEY (idCompra) REFERENCES compras(idCompra),
+    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor),
+    FOREIGN KEY (idUser) REFERENCES users(idUser)
+);
+
+CREATE TABLE detalleReporte (
+    idReporte int AUTO_INCREMENT PRIMARY KEY,
+    idProducto INT,
+    nombreProducto varchar(255) NOT NULL,
+    cantidad INT,
+    precioUnitario decimal(10,2),
+    FOREIGN KEY (idReporte) REFERENCES reportes(idReporte),
+    FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
+);
