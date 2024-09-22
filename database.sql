@@ -66,7 +66,7 @@ CREATE TABLE detallesCompra (
     cantidad int,
     precioUnitario decimal(10,2),
     FOREIGN KEY (idCompra) REFERENCES compras(idCompra) ON DELETE SET NULL,
-    FOREIGN KEY (idProducto) REFERENCES productos(idProducto) ON DELETE SET NULL
+    FOREIGN KEY (idProducto) REFERENCES productos(idProducto) ON DELETE CASCADE
 );
 
 CREATE TABLE reportes (
