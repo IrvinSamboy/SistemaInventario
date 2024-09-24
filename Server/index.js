@@ -22,11 +22,11 @@ app.use(cookieParser())
 
 
 app.use('/api/auth', authRoutes);
-app.use('/api', empleadosRoutes);
+app.use('/api/empleados', empleadosRoutes);
 app.use('/api/proveedores', proveedoresRoutes)
 app.use('/api/categorias', categoriasRoutes)
 app.use('/api/productos', productosRoutes)
-app.us('/api/compra', comprasRoutes)
+app.use('/api/compra', comprasRoutes)
 
 const setUpServer = async () => {
     try{

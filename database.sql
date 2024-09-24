@@ -20,7 +20,7 @@ create table empleados (
     email VARCHAR(255) UNIQUE,
     fecha_contratacion DATE,
     foto varchar(255),
-    idUser int NOT NULL,
+    idUser int NOT NULL UNIQUE,
     FOREIGN KEY (idUser) REFERENCES users(idUser)
 );
 

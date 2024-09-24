@@ -10,6 +10,7 @@ export const singup = async (req, res) => {
         if(!nombre || !contraseña) return res.status(400).json({message: "Uno o más campos vacios"})
         let rolId;
         if(rol) {
+            if(isNaN(rol)) return res.status(500).json({message: "Debes introducir el id del rol como número"})
             const {idRol} = await db.select('idRol').where('idRol', rol).from('roles').first()
             if(!idRol) return res.status(404).json({message: "Rol no encontrado"})
             rolId = idRol;

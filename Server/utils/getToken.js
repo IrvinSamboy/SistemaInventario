@@ -1,6 +1,6 @@
-import { verifyToken } from "./token";
+import { verifyToken } from "./token.js";
 
-export default getToken = async (token) => {
+const getToken = async (token) => {
     try{
         if(!token) return false
         const tokenVerifyed = await verifyToken(token)
@@ -13,3 +13,5 @@ export default getToken = async (token) => {
         console.log(error)
     }
 }
+
+export default getToken

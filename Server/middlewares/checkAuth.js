@@ -4,7 +4,7 @@ import getToken from '../utils/getToken.js'
 export const checkAuth = (roles) => async (req, res, next) => {
 
     try {
-        const tokenVerifyed = getToken(req.cookies.token)
+        const tokenVerifyed = await getToken(req.cookies.token)
         if(!tokenVerifyed) return res.status(403).json({message: "Sin autorización, token de sesión incorrecto"})
         
         if(roles.length === 0) return next()
@@ -32,7 +32,6 @@ export const checkAuth = (roles) => async (req, res, next) => {
             } 
             match = false
         }
-
         if(!match) return res.status(403).json({message: "No tienes suficientes permisos para acceder"})
         next()
     
