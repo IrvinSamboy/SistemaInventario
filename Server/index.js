@@ -9,6 +9,7 @@ import proveedoresRoutes from './routes/proveedores.routes.js'
 import categoriasRoutes from './routes/categorias.routes.js'
 import productosRoutes from './routes/productos.routes.js'
 import comprasRoutes from './routes/compras.routes.js'
+import userRoutes from './routes/user.routes.js'
 import cookieParser from 'cookie-parser'
 dotenv.config()
 
@@ -27,6 +28,7 @@ app.use('/api/proveedores', proveedoresRoutes)
 app.use('/api/categorias', categoriasRoutes)
 app.use('/api/productos', productosRoutes)
 app.use('/api/compra', comprasRoutes)
+app.use('/api/users', userRoutes)
 
 const setUpServer = async () => {
     try{
