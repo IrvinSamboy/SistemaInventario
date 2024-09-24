@@ -4,7 +4,6 @@ import {checkAuth} from '../middlewares/checkAuth.js'
 
 const router = Router()
 
-router.post('/singup', checkAuth(["admin"]), authController.singup)
 router.post('/signin', authController.signin)
 router.get('/logout', authController.logOut)
 router.get('/verifyLogin', checkAuth([]), (req, res) => {
