@@ -94,11 +94,16 @@ export const updateUser = async (req, res) => {
             if(!rolExists) return res.status(404).json({message: "Rol no encontrado"})
         }
 
+        if(nombre !== userExists.nombre) {
+            const nombreExists = await db.select('*').where('nombre', nombre).from('users').first()
+            if(nombreExists) return res.status(404).json({message: "Ya hay un usuario con este nombre"})
+        }
+
         const userUpdated = await db('users').update({
             nombre,
             contraseña: hashedPassWord,
             idRol
-        })
+        }).where('idUser', id)
 
         if(!userUpdated) return res.status(404).json({message: "Error al actualizar datos de usuario"})
         return res.status(200).json({message: "Usuario actualizado correctamente"})
