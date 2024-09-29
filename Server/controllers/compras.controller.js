@@ -52,3 +52,43 @@ export const deleteCompra = async (req, res) => {
         console.log(error)
     }
 }
+
+export const generarFactura = async (req, res) => {
+    try{
+        const trx = await db.transaction();
+        const {idCompra} = req.params
+        const compra = await trx.select('compras.*', 'proveedores.nombre as nombreProveedor', 'usuarios.nombre as nombreUsuario')
+        .where('idCompra', idCompra).from('compras')
+        .join('users', 'user.IdUser', 'compra.IdUser')
+        .join('proveedores', 'proveedores.idProveedor', 'compra.idProveedor').first()
+        if(!compra) return res.status(404).json({message: "Error al encontrar la compra asociada a esta factura"})
+        const detallesCompra = await trx.select('detallesCompra.*', 'productos.nombre as nombreProducto').where('idCompra', idCompra)
+        .join('productos', 'productos.idProducto', 'detallesCompra.idProducto')
+        if(detallesCompra.length === 0)return res.status(404).json({message: "Esta compra no tiene productos"})
+        await trx('reportes')
+        .insert({
+                idCompra: idCompra,
+                fecha: compra.fecha,
+                total: compra.total,
+                idProveedor: compra.idProveedor,
+                nombreProveedor: compra.nombreProveedor,
+                idUser: compra.idCompra,
+                nombreUsuario: compra.nombreUsuario,
+        })[0]
+        for(const detalleCompra of detallesCompra ) {
+            await trx('deleteCategoria')
+            .insert({
+                    idProducto: detalleCompra.idProducto,
+                    nombreProducto: detalleCompra.nombreProducto,
+                    cantidad: detalleCompra.cantidad,
+                    precioUnitario: detalleCompra.precioUnitario
+            })
+        }
+        return res.status(200).json({message: "Factura creada correctamente"})
+        
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+}

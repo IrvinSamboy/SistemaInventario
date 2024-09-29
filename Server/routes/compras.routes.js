@@ -7,5 +7,6 @@ const router = Router()
 router.post('/', checkAuth(["admin", "gerente", "usuario"]), comprasController.createCompra)
 router.put('/:id', checkAuth(["admin", "gerente", "usuario"]), comprasController.updateCompra)
 router.delete('/:id', checkAuth(["admin", "gerente", "usuario"]), comprasController.deleteCompra)
+router.post('/idCompra',  checkAuth(["admin", "gerente", "usuario"]), comprasController.generarFactura)
 
 export default router
