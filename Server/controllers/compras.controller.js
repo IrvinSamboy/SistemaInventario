@@ -57,42 +57,57 @@ export const generarFactura = async (req, res) => {
     try{
         const trx = await db.transaction();
         const {idCompra} = req.params
-        const reporte = await trx.select('*').where('idCompra', idCompra).from('reportes')
+        const reporte = await trx.select('*').where('idCompra', idCompra).from('reportes').first()
         if(reporte) {
             await trx('reportes').where('idCompra', idCompra).del()
         }
         const compra = await trx.select('compras.*', 'proveedores.nombre as nombreProveedor', 'users.nombre as nombreUsuario')
-        .where('idCompra', idCompra).from('compras')
+        .where('compras.idCompra', idCompra)
+        .from('compras')
         .join('users', 'users.IdUser', 'compras.IdUser')
-        .join('proveedores', 'proveedores.idProveedor', 'compras.idProveedor').first()
-        if(!compra) return res.status(404).json({message: "Error al encontrar la compra asociada a esta factura"})
-        const detallesCompra = await trx.select('detallesCompra.*', 'productos.nombre as nombreProducto').where('idCompra', idCompra).from('detallesCompra')
-        .join('productos', 'productos.idProducto', 'detallesCompra.idProducto')
-        if(detallesCompra.length === 0)return res.status(404).json({message: "Esta compra no tiene productos"})
-        await trx('reportes')
-        .insert({
-                idCompra: idCompra,
-                fecha: compra.fecha,
-                total: compra.total,
-                idProveedor: compra.idProveedor,
-                nombreProveedor: compra.nombreProveedor,
-                idUser: compra.idCompra,
-                nombreUsuario: compra.nombreUsuario,
-        })[0]
-        for(const detalleCompra of detallesCompra ) {
-            await trx('deleteCategoria')
-            .insert({
-                    idProducto: detalleCompra.idProducto,
-                    nombreProducto: detalleCompra.nombreProducto,
-                    cantidad: detalleCompra.cantidad,
-                    precioUnitario: detalleCompra.precioUnitario
-            })
+        .join('proveedores', 'proveedores.idProveedor', 'compras.idProveedor')
+        .first();
+
+        if (!compra) {
+            await trx.rollback();
+            return res.status(404).json({ message: "Error al encontrar la compra asociada a esta factura" });
         }
-        return res.status(200).json({message: "Factura creada correctamente"})
-        
+
+        const detallesCompra = await trx.select('detallesCompra.*', 'productos.nombre as nombreProducto')
+            .where('detallesCompra.idCompra', idCompra)
+            .from('detallesCompra')
+            .join('productos', 'productos.idProducto', 'detallesCompra.idProducto');
+
+        if (detallesCompra.length === 0) {
+            await trx.rollback();
+            return res.status(404).json({ message: "Esta compra no tiene productos" });
+        }
+        console.log(compra)
+        const [reporteId] = await trx('reportes').insert({
+            idCompra: idCompra,
+            fecha: compra.fecha,
+            total: compra.total,
+            idProveedor: compra.idProveedor,
+            nombreProveedor: compra.nombreProveedor,
+            idUser: compra.idUser,
+            nombreUsuario: compra.nombreUsuario,
+        });
+
+        for (const detalleCompra of detallesCompra) {
+            await trx('detalleReporte').insert({
+                idReporte: reporteId,
+                idProducto: detalleCompra.idProducto,
+                nombreProducto: detalleCompra.nombreProducto,
+                cantidad: detalleCompra.cantidad,
+                precioUnitario: detalleCompra.precioUnitario,
+            });
+        }
+
+        await trx.commit();
+        return res.status(200).json({ message: "Factura creada correctamente" });
+    } catch (error) {
+        await trx.rollback();
+        res.status(500).json({ message: error.message });
+        console.log(error);
     }
-    catch(error){
-        res.status(500).json({message: error.message})
-        console.log(error)
-    }
-}
+};

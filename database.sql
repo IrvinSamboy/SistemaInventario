@@ -78,17 +78,18 @@ CREATE TABLE reportes (
     nombreProveedor varchar(255),
     idUser INT,
     nombreUsuario varchar(150),
-    FOREIGN KEY (idCompra) REFERENCES compras(idCompra),
-    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor),
-    FOREIGN KEY (idUser) REFERENCES users(idUser)
+    FOREIGN KEY (idCompra) REFERENCES compras(idCompra) ON DELETE SET NULL,
+    FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor) ON DELETE SET NULL,
+    FOREIGN KEY (idUser) REFERENCES users(idUser) ON DELETE SET NULL
 );
 
 CREATE TABLE detalleReporte (
-    idReporte int AUTO_INCREMENT PRIMARY KEY,
+    idDetalleReporte INT AUTO_INCREMENT PRIMARY KEY,
+    idReporte int,
     idProducto INT,
     nombreProducto varchar(255) NOT NULL,
     cantidad INT,
     precioUnitario decimal(10,2),
-    FOREIGN KEY (idReporte) REFERENCES reportes(idReporte),
-    FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
+    FOREIGN KEY (idReporte) REFERENCES reportes(idReporte) ON DELETE CASCADE,
+    FOREIGN KEY (idProducto) REFERENCES productos(idProducto) ON DELETE SET NULL
 );
