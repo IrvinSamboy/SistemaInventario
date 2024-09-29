@@ -57,6 +57,10 @@ export const generarFactura = async (req, res) => {
     try{
         const trx = await db.transaction();
         const {idCompra} = req.params
+        const reporte = await trx.select('*').where('idCompra', idCompra).from('reportes')
+        if(reporte) {
+            await trx('reportes').where('idCompra', idCompra).del()
+        }
         const compra = await trx.select('compras.*', 'proveedores.nombre as nombreProveedor', 'usuarios.nombre as nombreUsuario')
         .where('idCompra', idCompra).from('compras')
         .join('users', 'user.IdUser', 'compra.IdUser')
