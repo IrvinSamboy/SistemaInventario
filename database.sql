@@ -54,7 +54,7 @@ CREATE TABLE compras (
     fecha DATE,
     total decimal(10,2) DEFAULT 0, 
     idProveedor int,
-    idUser INT,
+    idUser INT NOT NULL,
     FOREIGN KEY (idProveedor) REFERENCES proveedores(idProveedor) ON DELETE SET NULL,
     FOREIGN KEY (idUser) REFERENCES users(idUser) ON DELETE SET NULL
 );
