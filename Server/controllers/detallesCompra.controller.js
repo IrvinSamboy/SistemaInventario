@@ -4,15 +4,17 @@ export const addDetalle = async (req, res) => {
     try{
         const {idCompra, idProducto, cantidad} = req.body
         if(!idCompra, !idProducto, !cantidad) return res.status(400).json({message: "Uno o más campos vacios"})
-        const compraExists = db.select('*').where('idCompra', idCompra).from('compras').first()
+        const compraExists = await db.select('*').where('idCompra', idCompra).from('compras').first()
         if(!compraExists) return res.status(404).json({message: "No se ha encontrado la compra seleccionada"})
-        const productoExists = db.select('*').where('idProducto', idProducto).from('productos').first()
+        const productoExists = await db.select('*').where('idProducto', idProducto).from('productos').first()
         if(!productoExists) return res.status(404).json({message: "No se ha encontrado el producto seleccionado"})
+        const productoInDetalle = await db.select('*').where('idProducto', idProducto).from('detallesCompra').first()
+        if(productoInDetalle) return res.status(404).json({message: "Ya se ha añadido el producto"})
         const precioUnitario = productoExists.precioCompra
         const total = compraExists.total + (precioUnitario * cantidad)
-        const compraUpdated = db('compra').update({total}).where('idCompra', idCompra)
+        const compraUpdated = await db('compras').update({total}).where('idCompra', idCompra)
         if(!compraUpdated) return res.status(500).json({message: "Hubo un error a la hora de actualizar el total"})
-        const newDetalle = db('detallesCompra').insert({idCompra, idCompra, cantidad, precioUnitario})
+        const newDetalle = await db('detallesCompra').insert({idCompra, idProducto, cantidad, precioUnitario})
         if(!newDetalle) return res.status(500).json({message: "Hubo un error a la hora de añadir el producto"})
         return res.status(200).json({message: "Producto añadido correctamente"})
     }
@@ -25,9 +27,9 @@ export const addDetalle = async (req, res) => {
 export const editDetalle = async (req, res) => {
     try{
         const {id} = req.params 
-        const detalleExists = await db.select('*').where('idDetalle', id).from('detallesCompra')
+        const detalleExists = await db.select('*').where('idDetalle', id).from('detallesCompra').first()
         if(!detalleExists) return res.status(404).json({message: "Detalle no encontrado"})
-        const compraTotal = db.select('total').where('idCompra', detalleExists.idCompra).from('compras').first()
+        const compraTotal = await db.select('total').where('idCompra', detalleExists.idCompra).from('compras').first()
         const {
                 idProducto = detalleExists.idProducto, 
                 cantidad = detalleExists.cantidad
@@ -37,12 +39,15 @@ export const editDetalle = async (req, res) => {
         if(idProducto !== detalleExists.idProducto) {
             const productoExists = db.select('*').where('idProducto', idProducto).from('productos').first()
             if(!productoExists) return res.status(404).json({message: "No se ha encontrado el producto seleccionado"})
+            const productoInDetalle = await db.select('*').where('idProducto', idProducto).from('detallesCompra').first()
+            if(productoInDetalle) return res.status(404).json({message: "Ya se ha añadido el producto"})
             precioUnitario = productoExists.precioCompra
         }
                 
         if(cantidad !== detalleExists.cantidad || idProducto !== detalleExists.idProducto){
-            const total = compraTotal.total + (precioUnitario * cantidad)
-            const compraUpdated = db('compra').update({total}).where('idCompra', detalleExists.idCompra)
+            const resta = detalleExists.precioUnitario * detalleExists.cantidad
+            const total = (compraTotal.total - resta) + (precioUnitario * cantidad)
+            const compraUpdated = await db('compras').update({total}).where('idCompra', detalleExists.idCompra)
             if(!compraUpdated) return res.status(500).json({message: "Hubo un error a la hora de actualizar el total"})
         }
         
@@ -64,9 +69,14 @@ export const editDetalle = async (req, res) => {
 export const deleteDetalle = async (req, res) => {
     try{
         const {id} = req.params 
-        const detalleExists = await db.select('*').where('idDetalle', id).from('detallesCompra')
+        const detalleExists = await db.select('*').where('idDetalle', id).from('detallesCompra').first()
         if(!detalleExists) return res.status(404).json({message: "Detalle no encontrado"})
-        await db('detalleCompra').where('idDetalle', id).del()
+        const compraTotal = await db.select('total').where('idCompra', detalleExists.idCompra).from('compras').first()
+        const resta = detalleExists.precioUnitario * detalleExists.cantidad
+        const total = compraTotal.total - resta
+        const compraUpdated = await db('compras').update({total}).where('idCompra', detalleExists.idCompra)
+        if(!compraUpdated) return res.status(500).json({message: "Hubo un error a la hora de actualizar el total"})
+        await db('detallesCompra').where('idDetalle', id).del()
         return res.status(200).json({message: "Detalle eliminado correctamente"})
 
     }
