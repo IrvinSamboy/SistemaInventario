@@ -1,6 +1,57 @@
 import {db} from '../models/db.js'
 import getToken from '../utils/getToken.js'
 
+export const getCompras = async (req, res) => {
+    try{
+        const compras = await db.select('compras.*', 'proveedores.nombre as nombreProveedor', 'users.nombre as nombreUsuario')
+        .from('compras')
+        .join('users', 'users.IdUser', 'compras.IdUser')
+        .join('proveedores', 'proveedores.idProveedor', 'compras.idProveedor')
+        if(compras.length === 0) return res.status(404).json({message: "No tienes compras en el sistema"})
+        res.status(200).json({message: compras})
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+}
+
+export const getCompraById = async (req, res) => {
+    try{
+        const {id} = req.params
+        const compra = await db.select('compras.*', 'proveedores.nombre as nombreProveedor', 'users.nombre as nombreUsuario')
+        .where('compras.idCompra', id)
+        .from('compras')
+        .join('users', 'users.IdUser', 'compras.IdUser')
+        .join('proveedores', 'proveedores.idProveedor', 'compras.idProveedor')
+        .first();
+        if(!compra) return res.status(404).json({message: "Compra no encontrada"})
+        res.status(200).json({message: compra})
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+}
+
+export const getCompraByDate = async (req, res) => {
+    try{
+        const {fecha} = req.params
+        const compra = await db.select('compras.*', 'proveedores.nombre as nombreProveedor', 'users.nombre as nombreUsuario')
+        .where('fecha', 'like', `${fecha}%`)
+        .from('compras')
+        .join('users', 'users.IdUser', 'compras.IdUser')
+        .join('proveedores', 'proveedores.idProveedor', 'compras.idProveedor')
+        .first();
+        if(!compra) return res.status(404).json({message: "No hay compras en esta fecha"})
+        res.status(200).json({message: compra})
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+}
+
 export const createCompra = async (req, res) => {
     try{
         const {idProveedor} = req.body

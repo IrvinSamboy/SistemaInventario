@@ -30,7 +30,7 @@ app.use('/api/categorias', categoriasRoutes)
 app.use('/api/productos', productosRoutes)
 app.use('/api/compra', comprasRoutes)
 app.use('/api/users', userRoutes)
-app.use('/api/detalle', detalleCompraRoutes)
+app.use('/api/detalles', detalleCompraRoutes)
 
 const setUpServer = async () => {
     try{
