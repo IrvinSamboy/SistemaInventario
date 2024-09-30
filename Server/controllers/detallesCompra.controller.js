@@ -1,5 +1,39 @@
 import {db} from '../models/db.js'
 
+export const getDetalles = async (req, res) => {
+    try{
+        const {id} = req.params
+        const compra = await db.select('*').where('idCompra', id).from('compras').first()
+        if(!compra) return res.status(404).json({message: "Compra no encontrada"})
+        const detallesCompra = await db.select('detallesCompra.*', 'productos.nombre as nombreProducto')
+        .where('detallesCompra.idCompra', id)
+        .from('detallesCompra')
+        .join('productos', 'productos.idProducto', 'detallesCompra.idProducto')
+        if(detallesCompra.length === 0) return res.status(404).json({message: "No has añadido productos a la compra"})
+        return res.status(200).json({message: detallesCompra})
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+}
+
+export const getDetalleByID = async (req, res) => {
+    try{
+        const {id} = req.params
+        const detalleCompra = await db.select('detallesCompra.*', 'productos.nombre as nombreProducto')
+        .where('detallesCompra.idDetalle', id)
+        .from('detallesCompra')
+        .join('productos', 'productos.idProducto', 'detallesCompra.idProducto').first()
+        if(!detalleCompra) return res.status(404).json({message: "No has añadido productos a la compra"})
+        return res.status(200).json({message: detalleCompra})
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+        console.log(error)
+    }
+}
+
 export const addDetalle = async (req, res) => {
     try{
         const {idCompra, idProducto, cantidad} = req.body
