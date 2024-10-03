@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 
 export const getUsers = async (req, res) => {
     try{
-        const users = await db.select('*').from('users')
+        const users = await db.select('users.*', 'roles.nombre as nombreRol').from('users').join('roles', 'users.idRol', 'roles.idRol')
         res.status(200).json({message: users})
     }
     catch(error){
@@ -15,7 +15,7 @@ export const getUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
     try{
         const {id} = req.params 
-        const user = await db.select('*').where('idUser', id).from('users').first()
+        const user = await db.select('users.*', 'roles.nombre as nombreRol').where('users.idUser', id).from('users').join('roles', 'users.idRol', 'roles.idRol').first()
         if(!user) return res.status(404).json({message: "Usuario no encontrado"})
         res.status(200).json({message: user})
     }

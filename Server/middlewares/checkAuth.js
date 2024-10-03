@@ -1,5 +1,4 @@
 import {db} from '../models/db.js'
-import {verifyToken} from '../utils/token.js'
 import getToken from '../utils/getToken.js'
 export const checkAuth = (roles) => async (req, res, next) => {
 
