@@ -1,8 +1,9 @@
+import SideBar from "../components/SideBar"
 
 export default function DashBoard() {
   return (
     <div>
-        <h1>home</h1>
+        <SideBar />
     </div>
   )
 }
