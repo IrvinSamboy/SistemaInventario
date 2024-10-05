@@ -19,7 +19,7 @@ export default function SideBar() {
     return (
         <>
             <FaBars className='cursor-pointer absolute z-10 top-[3%] left-[0.7%] text-2xl' onClick={handleShowMenu}/>
-            <div className={`bg-white w-[300px] h-screen py-4 absolute transition-all ${showMenu?'left-[0%]':'left-[-100%]'}`}>
+            <div className={`bg-white w-[300px] h-screen py-4 absolute transition-all duration-300 ease-in-out ${showMenu ? 'left-[0%]' : 'left-[-100%]'}`}>
                 <h1 className='font-bold text-[#4338CA] text-[24px] px-3 py-8 text-center'>Sistema<span className='text-black'>Inventario</span></h1>
                 <div className=' flex flex-col gap-8'>
                     <div className='flex gap-2 items-center text-xl font-semibold px-5 py-3 hover:bg-gray-300 cursor-pointer'>
