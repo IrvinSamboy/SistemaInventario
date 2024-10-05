@@ -3,7 +3,7 @@ import {db} from "../models/db.js";
 // Obtener todos los empleados
 export const getEmpleados = async (req, res) => {
     try {
-        const empleados = await db.select('*').from('empleados')
+        const empleados = await db.select('empleados.*', 'users.nombre as nombreUsuario').from('empleados').join('users', 'users.idUser', 'empleados.idUser')
         if(empleados.length === 0) return res.status(404).json({message: "No hay empleados en el sistema"})
         res.status(200).json({message: empleados});
     } catch (error) {
@@ -16,7 +16,7 @@ export const getEmpleados = async (req, res) => {
 export const getEmpleadoById = async (req, res) => {
     try {
         const {id} = req.params;
-        const empleado = await db.select('*').where('idEmpleado', id).from('empleados').first();
+        const empleado = await db.select('empleados.*', 'users.nombre as nombreUsuario').where('empleados.idEmpleado', id).from('empleados').join('users', 'users.idUser', 'empleados.idUser').first();
         if (!empleado) return res.status(404).json({ message: 'Empleado no encontrado'});
         res.status(200).json(empleado);
     } catch (error) {

@@ -2,7 +2,7 @@ import {db} from '../models/db.js'
 
 export const getProducto = async (req, res) => {
     try{
-        const productos = await db.select('*').from('productos')
+        const productos = await db.select('productos.*', 'categorias.nombre as nombreCategoria').from('productos').join('categorias', 'productos.idCategoria', 'categorias.idCategoria')
         if(productos.length === 0) return res.status(404).json({message: "No hay productos en el sistema"})
         res.status(200).json({message: productos})
     }
@@ -15,7 +15,7 @@ export const getProducto = async (req, res) => {
 export const getProductoById = async (req, res) => {
     try{
         const {id} = req.params
-        const producto = await db.select('*').where('idProducto', id).from('productos').first()
+        const producto = await db.select('productos.*', 'categorias.nombre as nombreCategoria').where('productos.idProducto', id).from('productos').join('categorias', 'productos.idCategoria', 'categorias.idCategoria').first()
         if(!producto) return res.status(404).json({message: "Producto no encontrado"})
         res.status(200).json({message: producto})
     }
@@ -30,7 +30,7 @@ export const getProductosByCategoria = async (req, res) => {
         const {id} = req.params
         const categoriaExists = await db.select('idCategoria', 'nombre').where('idCategoria', id).from('categorias').first()
         if(!categoriaExists) return res.status(404).json({message: "Categoróa no encontrada"})
-        const productos = await db.select('*').where('idCategoria', id).from('productos')
+        const productos = await db.select('productos.*', 'categorias.nombre as nombreCategoria').where('productos.idCategoria', id).from('productos').join('categorias', 'productos.idCategoria', 'categorias.idCategoria')
         if(productos.length === 0) return res.status(404).json({message: "Esta categoria no posee productos"})
         res.status(200).json({message: productos})
     }
