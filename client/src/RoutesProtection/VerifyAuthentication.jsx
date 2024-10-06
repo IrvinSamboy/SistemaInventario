@@ -2,6 +2,7 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import useFetch from '../Hooks/useFetch'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import Loader from '../components/Loader'
 
 export default function VerifyAuthentication() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -29,7 +30,7 @@ export default function VerifyAuthentication() {
     verifyLogin()
   }, [location])
 
-  if(loading) return <h1>Cargando</h1>
+  if (loading) return <Loader />;
 
   
   if(authenticated) return location.pathname !== '/'? <Navigate to='/' /> : <Outlet />
